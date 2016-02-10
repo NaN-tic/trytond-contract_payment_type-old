@@ -1,0 +1,27 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:contract,company_bank_account:"
+msgid "Company Bank Account"
+msgstr "Cuenta bancaria de la empresa"
+
+msgctxt "field:contract,company_party:"
+msgid "Company Party"
+msgstr "Tercero de la empresa"
+
+msgctxt "field:contract,payment_type:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgctxt "field:contract,receivable_bank_account:"
+msgid "Receivable Bank Account"
+msgstr "Cuenta bancaria a cobrar"
+
+msgctxt "help:contract,company_bank_account:"
+msgid "Default party payable bank account"
+msgstr "Cuenta bancaria del tercero por defecto"
+
+msgctxt "help:contract,receivable_bank_account:"
+msgid "Party bank account"
+msgstr "Cuenta bancaria del tercero"
