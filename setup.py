@@ -1,19 +1,24 @@
 #!/usr/bin/env python
-# This file is part of the contract_payment_type module for Tryton.
+# This file is part contract_payment_type module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 
 from setuptools import setup
 import re
 import os
-import ConfigParser
+import io
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 
 MODULE2PREFIX = {}
 
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
+    return io.open(
+        os.path.join(os.path.dirname(__file__), fname),
+        'r', encoding='utf-8').read()
 
 def get_require_version(name):
     if minor_version % 2:
@@ -24,7 +29,7 @@ def get_require_version(name):
         major_version, minor_version + 1)
     return require
 
-config = ConfigParser.ConfigParser()
+config = ConfigParser()
 config.readfp(open('tryton.cfg'))
 info = dict(config.items('tryton'))
 for key in ('depends', 'extras_depend', 'xml'):
@@ -34,9 +39,8 @@ version = info.get('version', '0.0.1')
 major_version, minor_version, _ = version.split('.', 2)
 major_version = int(major_version)
 minor_version = int(minor_version)
-name = 'trytond-contract_payment_type'
-download_url = ('https://bitbucket.org/zikzakmedia/'
-    'trytond-contract_payment_type')
+name = 'trytonzz_contract_payment_type'
+download_url = 'https://bitbucket.org/zikzakmedia/trytond-contract_payment_type'
 
 requires = []
 for dep in info.get('depends', []):
@@ -53,14 +57,13 @@ if minor_version % 2:
 
 setup(name=name,
     version=version,
-    description='This module adds two fields to the contract to indicate the '
-        'payment type and bank account of the customer or the income bank account of '
-        'the company.',
+    description='Tryton Contract Payment Type Module',
     long_description=read('README'),
-    author='zikzakmedia',author_email='zikzak@zikzakmedia.com',
+    author='Zikzakmedia SL',
+    author_email='zikzak@zikzakmedia.com',
     url='https://bitbucket.org/zikzakmedia/',
     download_url=download_url,
-    keywords='Account, Contract',
+    keywords='',
     package_dir={'trytond.modules.contract_payment_type': '.'},
     packages=[
         'trytond.modules.contract_payment_type',
@@ -79,11 +82,24 @@ setup(name=name,
         'Intended Audience :: Financial and Insurance Industry',
         'Intended Audience :: Legal Industry',
         'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Natural Language :: Bulgarian',
         'Natural Language :: Catalan',
+        'Natural Language :: Czech',
+        'Natural Language :: Dutch',
         'Natural Language :: English',
+        'Natural Language :: French',
+        'Natural Language :: German',
+        'Natural Language :: Hungarian',
+        'Natural Language :: Italian',
+        'Natural Language :: Portuguese (Brazilian)',
+        'Natural Language :: Russian',
+        'Natural Language :: Slovenian',
         'Natural Language :: Spanish',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Office/Business',
@@ -99,4 +115,5 @@ setup(name=name,
     test_suite='tests',
     test_loader='trytond.test_loader:Loader',
     tests_require=tests_require,
+    use_2to3=True,
     )
