@@ -6,10 +6,10 @@ from trytond.model import fields
 from trytond.pyson import Eval, Bool
 
 __all__ = ['Contract', 'ContractConsumption']
-__metaclass__ = PoolMeta
 
 
 class Contract:
+    __metaclass__ = PoolMeta
     __name__ = 'contract'
     company_party = fields.Function(fields.Many2One('party.party',
             'Company Party'), 'get_company_party')
@@ -38,6 +38,7 @@ class Contract:
 
 
 class ContractConsumption:
+    __metaclass__ = PoolMeta
     __name__ = 'contract.consumption'
 
     @classmethod
