@@ -10,6 +10,10 @@ msgctxt "field:contract,company_party:"
 msgid "Company Party"
 msgstr "Tercer de l'empresa"
 
+msgctxt "field:contract.configuration,payment_type:"
+msgid "Payment Type"
+msgstr "Tipus de pagament"
+
 msgctxt "field:contract,payment_type:"
 msgid "Payment Type"
 msgstr "Tipus de pagament"
