@@ -1,7 +1,7 @@
 # This file is part of the contract_payment_type module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-from trytond.pool import PoolMeta
+from trytond.pool import Pool, PoolMeta
 from trytond.model import fields
 from trytond.pyson import Eval, Bool
 
@@ -32,6 +32,12 @@ class Contract:
             'invisible': ~Bool(Eval('payment_type')),
         }, depends=['id', 'payment_type'],
         help='Default party payable bank account')
+
+    @staticmethod
+    def default_payment_type():
+        Config = Pool().get('contract.configuration')
+        config = Config(1)
+        return config.payment_type
 
     def get_company_party(self, name=None):
         return self.company.party.id if self.company else None

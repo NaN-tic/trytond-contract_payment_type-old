@@ -2,10 +2,12 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from trytond.pool import Pool
-from .contract import *
+from . import configuration
+from . import contract
 
 def register():
     Pool.register(
-        Contract,
-        ContractConsumption,
+        configuration.Configuration,
+        contract.Contract,
+        contract.ContractConsumption,
         module='contract_payment_type', type_='model')
