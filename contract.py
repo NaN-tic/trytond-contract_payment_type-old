@@ -6,23 +6,23 @@ from trytond.model import fields
 from trytond.pyson import Eval, Bool
 
 __all__ = ['Contract', 'ContractConsumption']
-__metaclass__ = PoolMeta
 
 
 class Contract:
+    __metaclass__ = PoolMeta
     __name__ = 'contract'
     company_party = fields.Function(fields.Many2One('party.party',
-            'Company Party'), 'get_company_party')
+        'Company Party'), 'get_company_party')
     payment_type = fields.Many2One('account.payment.type',
         'Payment Type', domain=[
             ('kind', '=', 'receivable'),
-            ])
+        ])
     receivable_bank_account = fields.Many2One('bank.account',
         'Receivable Bank Account', domain=[
             ('owners', '=', Eval('party')),
         ], states={
             'invisible': ~Bool(Eval('payment_type')),
-        }, depends=['company_party'],
+        }, depends=['payment_type', 'party'],
         help='Party bank account')
     company_bank_account = fields.Many2One('bank.account',
         'Company Bank Account',
@@ -30,7 +30,7 @@ class Contract:
             ('owners', '=', Eval('company_party')),
         ], states={
             'invisible': ~Bool(Eval('payment_type')),
-        }, depends=['id', 'payment_type'],
+        }, depends=['company_party', 'payment_type'],
         help='Default party payable bank account')
 
     @staticmethod
@@ -44,23 +44,36 @@ class Contract:
 
 
 class ContractConsumption:
+    __metaclass__ = PoolMeta
     __name__ = 'contract.consumption'
 
     @classmethod
-    def _get_invoice(cls, keys):
-        invoice = super(ContractConsumption, cls)._get_invoice(keys)
+    def _group_invoice_key(cls, line):
+        grouping = super(ContractConsumption, cls)._group_invoice_key(line)
 
-        values = dict(keys)
-        contract = values['contract']
+        consumption_id, _ = line
+        consumption = cls(consumption_id)
+        grouping.append(
+            ('payment_type', consumption.contract_line.contract.payment_type))
+        return grouping
 
-        if contract.payment_type:
-            invoice.payment_type = contract.payment_type
+    @classmethod
+    def _invoice(cls, consumptions):
+        Invoice = Pool().get('account.invoice')
 
-            if invoice.payment_type.account_bank == 'party':
-                if contract.receivable_bank_account:
-                    invoice.bank_account = contract.receivable_bank_account
-            elif invoice.payment_type.account_bank == 'company':
-                if contract.company_bank_account:
-                    invoice.bank_account = contract.company_bank_account
+        invoices = super(ContractConsumption, cls)._invoice(consumptions)
 
-        return invoice
+        to_write = []
+        for invoice in invoices:
+            contract = None
+            for line in invoice.lines:
+                if line.origin and line.origin.__name__ == 'contract.consumption':
+                    contract = line.origin.contract_line.contract
+                    break
+            if contract and contract.payment_type:
+                to_write.extend(([invoice], {'payment_type': contract.payment_type}))
+
+        if to_write:
+            Invoice.write(*to_write)
+
+        return invoices
