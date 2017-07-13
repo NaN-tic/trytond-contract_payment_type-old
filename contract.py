@@ -37,7 +37,7 @@ class Contract:
     def default_payment_type():
         Config = Pool().get('contract.configuration')
         config = Config(1)
-        return config.payment_type
+        return config.payment_type.id if config.payment_type else None
 
     def get_company_party(self, name=None):
         return self.company.party.id if self.company else None
