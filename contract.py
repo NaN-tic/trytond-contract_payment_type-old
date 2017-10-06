@@ -70,8 +70,11 @@ class ContractConsumption:
                 if line.origin and line.origin.__name__ == 'contract.consumption':
                     contract = line.origin.contract_line.contract
                     break
-            if contract and contract.payment_type:
-                to_write.extend(([invoice], {'payment_type': contract.payment_type}))
+            if contract:
+                payment_type = (contract.payment_type or
+                    contract.party.customer_payment_type)
+                if payment_type:
+                    to_write.extend(([invoice], {'payment_type': payment_type}))
 
         if to_write:
             Invoice.write(*to_write)
