@@ -5,9 +5,11 @@ from trytond.pool import Pool
 from . import configuration
 from . import contract
 
+
 def register():
     Pool.register(
         configuration.Configuration,
+        configuration.ConfigurationAccount,
         contract.Contract,
         contract.ContractConsumption,
         module='contract_payment_type', type_='model')
