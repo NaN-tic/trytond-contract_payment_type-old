@@ -3,7 +3,6 @@
 # the full copyright notices and license terms.
 from trytond.pool import Pool, PoolMeta
 from trytond.model import fields
-from trytond.pyson import Eval, Bool
 
 __all__ = ['Contract', 'ContractConsumption']
 
@@ -11,36 +10,16 @@ __all__ = ['Contract', 'ContractConsumption']
 class Contract:
     __metaclass__ = PoolMeta
     __name__ = 'contract'
-    company_party = fields.Function(fields.Many2One('party.party',
-        'Company Party'), 'get_company_party')
     payment_type = fields.Many2One('account.payment.type',
         'Payment Type', domain=[
             ('kind', '=', 'receivable'),
         ])
-    receivable_bank_account = fields.Many2One('bank.account',
-        'Receivable Bank Account', domain=[
-            ('owners', '=', Eval('party')),
-        ], states={
-            'invisible': ~Bool(Eval('payment_type')),
-        }, depends=['payment_type', 'party'],
-        help='Party bank account')
-    company_bank_account = fields.Many2One('bank.account',
-        'Company Bank Account',
-        domain=[
-            ('owners', '=', Eval('company_party')),
-        ], states={
-            'invisible': ~Bool(Eval('payment_type')),
-        }, depends=['company_party', 'payment_type'],
-        help='Default party payable bank account')
 
     @staticmethod
     def default_payment_type():
         Config = Pool().get('contract.configuration')
         config = Config(1)
         return config.payment_type.id if config.payment_type else None
-
-    def get_company_party(self, name=None):
-        return self.company.party.id if self.company else None
 
 
 class ContractConsumption:
@@ -74,7 +53,11 @@ class ContractConsumption:
                 payment_type = (contract.payment_type or
                     contract.party.customer_payment_type)
                 if payment_type:
-                    to_write.extend(([invoice], {'payment_type': payment_type}))
+                    to_write.extend(([invoice], {
+                        'payment_type': payment_type,
+                        'bank_account': (invoice.party.receivable_bank_account
+                            if payment_type.account_bank == 'party' else None),
+                        }))
 
         if to_write:
             Invoice.write(*to_write)

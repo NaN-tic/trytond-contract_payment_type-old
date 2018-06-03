@@ -6,9 +6,5 @@ copyright notices and license terms. -->
     <xpath expr="/form/field[@name='party']" position="after">
         <label name="payment_type"/>
         <field name="payment_type"/>
-        <label name="receivable_bank_account"/>
-        <field name="receivable_bank_account"/>
-        <label name="company_bank_account"/>
-        <field name="company_bank_account"/>
     </xpath>
 </data>
