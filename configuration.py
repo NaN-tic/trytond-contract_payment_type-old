@@ -6,8 +6,7 @@ from trytond.model import fields
 __all__ = ['Configuration', 'ConfigurationAccount']
 
 
-class Configuration:
-    __metaclass__ = PoolMeta
+class Configuration(metaclass=PoolMeta):
     __name__ = 'contract.configuration'
     payment_type = fields.MultiValue(fields.Many2One('account.payment.type',
         'Payment Type', domain=[
@@ -21,8 +20,7 @@ class Configuration:
         return super(Configuration, cls).multivalue_model(field)
 
 
-class ConfigurationAccount:
-    __metaclass__ = PoolMeta
+class ConfigurationAccount(metaclass=PoolMeta):
     __name__ = 'contract.configuration.account'
     payment_type = fields.Many2One('account.payment.type',
         'Payment Type', domain=[

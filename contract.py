@@ -7,8 +7,7 @@ from trytond.model import fields
 __all__ = ['Contract', 'ContractConsumption']
 
 
-class Contract:
-    __metaclass__ = PoolMeta
+class Contract(metaclass=PoolMeta):
     __name__ = 'contract'
     payment_type = fields.Many2One('account.payment.type',
         'Payment Type', domain=[
@@ -22,8 +21,7 @@ class Contract:
         return config.payment_type.id if config.payment_type else None
 
 
-class ContractConsumption:
-    __metaclass__ = PoolMeta
+class ContractConsumption(metaclass=PoolMeta):
     __name__ = 'contract.consumption'
 
     @classmethod

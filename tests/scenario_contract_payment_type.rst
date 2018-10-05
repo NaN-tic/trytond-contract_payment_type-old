@@ -14,7 +14,7 @@ Imports::
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
     ...     create_chart, get_accounts, create_tax
-    >>> from.trytond.modules.account_invoice.tests.tools import \
+    >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences, create_payment_term
     >>> today = datetime.date.today()
 
@@ -88,6 +88,16 @@ Create category::
     >>> category = ProductCategory(name='Category')
     >>> category.save()
 
+Create account category::
+
+    >>> ProductCategory = Model.get('product.category')
+    >>> account_category = ProductCategory(name="Account Category")
+    >>> account_category.accounting = True
+    >>> account_category.account_expense = accounts['expense']
+    >>> account_category.account_revenue = accounts['revenue']
+    >>> account_category.customer_taxes.append(tax)
+    >>> account_category.save()
+
 Create product::
 
     >>> ProductUom = Model.get('product.uom')
@@ -104,8 +114,7 @@ Create product::
     >>> template.list_price = Decimal('30')
     >>> template.cost_price = Decimal('10')
     >>> template.cost_price_method = 'fixed'
-    >>> template.account_expense = expense
-    >>> template.account_revenue = revenue
+    >>> template.account_category = account_category
     >>> template.save()
     >>> product.template = template
     >>> product.save()
@@ -148,10 +157,10 @@ Contracts monthly::
     >>> contract1, contract2 = Contract.find([])
     >>> contract1.click('confirm')
     >>> contract1.state
-    u'confirmed'
+    'confirmed'
     >>> contract2.click('confirm')
     >>> contract1.state
-    u'confirmed'
+    'confirmed'
 
 Create consumptions::
 
@@ -169,8 +178,8 @@ Create Invoices::
     >>> invoice1.party.id
     3
     >>> invoice1.payment_type.name
-    u'Payment Type'
+    'Payment Type'
     >>> invoice2.party.id
     2
     >>> invoice2.payment_type.name
-    u'Payment Type'
+    'Payment Type'
