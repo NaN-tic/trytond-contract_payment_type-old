@@ -51,11 +51,14 @@ class ContractConsumption(metaclass=PoolMeta):
                 payment_type = (contract.payment_type or
                     contract.party.customer_payment_type)
                 if payment_type:
-                    to_write.extend(([invoice], {
-                        'payment_type': payment_type,
-                        'bank_account': (invoice.party.receivable_bank_account
-                            if payment_type.account_bank == 'party' else None),
-                        }))
+                    values = {}
+                    values['payment_type'] = payment_type
+                    if hasattr(invoice, 'bank_account'):
+                        invoice.payment_type = payment_type
+                        invoice._get_bank_account()
+                        values['bank_account'] = (invoice.bank_account
+                            if invoice.bank_account else None)
+                    to_write.extend(([invoice], values))
 
         if to_write:
             Invoice.write(*to_write)
